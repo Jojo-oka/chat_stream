@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retro Chat Overlay</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tmi.js/1.8.5/tmi.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+        #chat-box {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px #000;
+            padding: 20px;
+            width: 400px;
+            height: 600px;
+            border: 4px double #fe4075;
+            box-shadow: 0 0 12px #2c4fb1;
+            overflow-y: hidden;
+        }
+        .message-line {
+            margin-bottom: 10px;
+            animation: slideUp 0.2s ease-in-out;
+        }
+        .message-line span.username {
+            color: #fe4075;
+            margin-right: 10px;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-box"></div>
+    <script>
+        const client = new tmi.Client({
+            channels: ['Jojo_oka']
+        });
+
+        client.connect();
+
+        const chatBox = document.getElementById("chat-box");
+        const maxMessages = 20;
+
+        client.on('message', (channel, tags, message, self) => {
+            const msgEl = document.createElement("div");
+            msgEl.className = "message-line";
+            msgEl.innerHTML = `<span class="username">${tags['display-name']}</span><span>${message}</span>`;
+            chatBox.appendChild(msgEl);
+
+            if (chatBox.children.length > maxMessages) {
+                chatBox.removeChild(chatBox.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>
